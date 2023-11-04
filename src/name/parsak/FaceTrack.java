@@ -20,6 +20,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -28,6 +29,10 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 public class FaceTrack {
+
+	public static AtomicReference<Float> xNorm = new AtomicReference<>(0.0f);
+	public static AtomicReference<Float> yNorm = new AtomicReference<>(0.0f);
+
 
 	//private static Scalar colorRed = new Scalar(255,0,0);
 	private static Scalar colorGreen = new Scalar(0,255,0);
@@ -42,17 +47,29 @@ public class FaceTrack {
 	
 	public static void main(String[] args) {
 
-		new FaceTrack().run();
+		//new FaceTrack().run();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				runFaceTracking();
+			}
+		}).start();
 
+
+
+	}
+
+
+	public static void runFaceTracking(){
 
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
+
 		CascadeClassifier cascade = new CascadeClassifier();
-		
+
 		try {
 			ClassLoader classLoader = FaceTrack.class.getClassLoader();
 			File file = new File(classLoader.getResource(haarcascade).getFile());
-			
+
 			if (cascade.load(file.getAbsolutePath())) {
 				loaded = true;
 			} else {
@@ -64,62 +81,65 @@ public class FaceTrack {
 
 		JFrame jframe = new JFrame("Face Track");
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		jframe.setSize(100, 100);
 		JLabel videoone = new JLabel();
 		JLabel videotwo = new JLabel();
-		
+
 		JPanel jPanel = new JPanel();
 		jPanel.add(videoone);
 		jPanel.add(videotwo);
 		jframe.add(jPanel);
 		jframe.setVisible(true);
-		
+
 		VideoCapture camera = new VideoCapture(0);
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
-        	@Override
-        	public void run() {
-        		camera.release();
-        	}
-        });
-		
+			@Override
+			public void run() {
+				camera.release();
+			}
+		});
+
 		if (!camera.isOpened()) {
 			System.out.println("Camera is not open");
 		} else  {
 			frame = new Mat();
 			grayframe = new Mat();
-			
+
 			if (camera.read(frame)) {
 				jframe.setSize(frame.width() + 50, frame.height() + 50);
 				while (true) {
-					
+
 					// Try to read camera
 					boolean read_camera = false;
 					try {read_camera = camera.read(frame);} catch (Exception e) {}
-					
+
 					if (read_camera) {
 						frame = ColorBGR(frame);
 						grayframe = ColorGray(frame);
-						
+
 						// Detect faces in grayscale
 						if (loaded) {
-								MatOfRect faceDetections = new MatOfRect();
-								cascade.detectMultiScale(grayframe, faceDetections);
-								for (Rect rect : faceDetections.toArray()) {
-									DrawRectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),colorGreen);
-									//System.out.println(rect.x +" "+ rect.y);
-								}
+							MatOfRect faceDetections = new MatOfRect();
+							cascade.detectMultiScale(grayframe, faceDetections);
+							for (Rect rect : faceDetections.toArray()) {
+								DrawRectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),colorGreen);
+								//System.out.println(rect.x/frame.size().width +" "+ rect.y/frame.size().height);
+								xNorm.updateAndGet(n -> (float) ((rect.x+rect.width/2)/frame.size().width)-0.5f);
+								yNorm.updateAndGet(n -> (float) ((rect.y+rect.height/3)/frame.size().height)-0.5f);
+
+							}
 						}
-						
+
 						// Display frame
 						videoone.setIcon(new ImageIcon(mat2Img(frame)));
-					 }
+					}
 				}
 			}
 		}
-
 	}
+
 	// The window handle
 	private long window;
 

@@ -1,6 +1,7 @@
 package name.parsak.game;
 
 
+import name.parsak.FaceTrack;
 import name.parsak.engine.Engine;
 import name.parsak.engine.IAppLogic;
 import name.parsak.engine.MouseInput;
@@ -15,7 +16,9 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -55,6 +58,14 @@ public class Main implements IAppLogic {
 
 
     public static void main(String[] args) {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FaceTrack.runFaceTracking();
+            }
+        }).start();
+
         Main main = new Main();
         Engine gameEng = new Engine("chapter-08", new Window.WindowOptions(), main);
         gameEng.start();
@@ -249,25 +260,25 @@ public class Main implements IAppLogic {
 
         if (window.isKeyPressed(GLFW_KEY_W)) {
             camera.moveUp(0.1f);
-            parallaxCameraPosition.y -=0.1f;
+          //  parallaxCameraPosition.y -=0.1f;
 
 
         } else if (window.isKeyPressed(GLFW_KEY_S)) {
             camera.moveDown(0.1f);
-            parallaxCameraPosition.y +=0.1f;
+          //  parallaxCameraPosition.y +=0.1f;
 
         }
         if (window.isKeyPressed(GLFW_KEY_A)) {
           //  camera.moveLeft(move);
-            parallaxCameraPosition.x +=0.1f;
-            camera.moveLeft(0.1f);
+            parallaxCameraPosition.x += 0.1f;//; 3.0f * FaceTrack.xNorm.get();
+            camera.moveLeft(0.2f);
            // camera.eye(eyePos,targetPos,upVec);
 
             //  parallaxCameraPosition.sub(move,0,0);
         } else if (window.isKeyPressed(GLFW_KEY_D)) {
            // camera.moveRight(move);
             parallaxCameraPosition.x -=0.1f;
-            camera.moveRight(0.1f);
+            camera.moveRight(0.2f);
             //  parallaxCameraPosition.add(move,0,0);
         }
         if (window.isKeyPressed(GLFW_KEY_UP)) {
@@ -337,8 +348,29 @@ public class Main implements IAppLogic {
         bottom = parallaxCameraPosition.y - 3.0f; //5.0f это near
 
 
+     //   System.out.println(FaceTrack.xNorm +" // "+ FaceTrack.yNorm);
+
+        parallaxCameraPosition.x = 6.0f * FaceTrack.xNorm.get();
+        parallaxCameraPosition.y = 6.0f * FaceTrack.yNorm.get();
+        System.out.println(camera.getPosition().x +" "+ (-10f * FaceTrack.xNorm.get()) + " "+ (camera.getPosition().x - (-10f * FaceTrack.xNorm.get())));
+
+          //  if(camera.getPosition().x - (5.0f * FaceTrack.xNorm.get())>0) {
+        camera.moveLeft((camera.getPosition().x - (-10f * FaceTrack.xNorm.get()))/10);
+          //  }else{
+           //     camera.moveRight(-(camera.getPosition().x - (5.0f * FaceTrack.xNorm.get()))/10);
+
+          //  }
+
+           // System.out.println( camera.getPosition().x +" / "+  camera.getPosition().y);
+
+
+       // camera.setXPosition(-5.0f * FaceTrack.xNorm.get());//,0,0);
+
+        //System.out.println( parallaxCameraPosition.x +" / "+  parallaxCameraPosition.y);
+
 // Обновите матрицу проекции в зависимости от изменения положения камеры взгляда
         scene.getProjection().getProjMatrix().setFrustum(left, right, bottom, top, near, far);
+
 
     }
 }

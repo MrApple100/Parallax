@@ -76,6 +76,15 @@ public class Camera {
                 .translate(-position.x, -position.y, -position.z);
     }
 
+    public void setXPosition(float xNorm){
+
+        viewMatrix.positiveX(right).x = xNorm;
+        position.set(right);
+        recalculate();
+
+
+    }
+
     public void eye(Vector3f eyePos,Vector3f targetPos,Vector3f upVec){
         //viewMatrix.lookAt(eyePos,targetPos,upVec);
         viewMatrix.setLookAt(eyePos,targetPos,upVec);
