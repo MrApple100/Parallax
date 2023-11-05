@@ -263,7 +263,7 @@ public class Main implements IAppLogic {
          camera = scene.getCamera();
          if(firstTime){
              camera.eye(eyePos,targetPos,upVec);
-             scene.getProjection().getProjMatrix().setFrustum(left, right, bottom, top, near, far);
+             //scene.getProjection().getProjMatrix().setFrustum(left, right, bottom, top, near, far);
              firstTime = false;
          }
 
@@ -354,10 +354,13 @@ public class Main implements IAppLogic {
      //   bottom = parallaxCameraPosition.y - 0.040f;
 //        near = eyePos.z;
 //        float offset = eyePos.x - left; // Расчет изменения left относительно предыдущего left
-        left = parallaxCameraPosition.x - 5.0f;
-        right = parallaxCameraPosition.x + 5.0f; //5.0f это рамки сцены которую надо видеть
-        top = parallaxCameraPosition.y + 5.0f;
-        bottom = parallaxCameraPosition.y - 5.0f; //5.0f это near
+        float scale = 1f * parallaxCameraPosition.z;
+        //  System.out.println(scale);
+        left = scale * ( parallaxCameraPosition.x - 5.0f);
+        right = scale * (parallaxCameraPosition.x + 5.0f); //5.0f это рамки пополам сцены которую надо видеть
+        top = scale * (parallaxCameraPosition.y + 5.0f);
+        bottom = scale * (parallaxCameraPosition.y - 5.0f);
+      //  near = 7f+parallaxCameraPosition.z - 7f;
      //   far = 400 + parallaxCameraPosition.z;
 
 
@@ -365,12 +368,13 @@ public class Main implements IAppLogic {
 
         parallaxCameraPosition.x = 14.0f * FaceTrack.xNorm.get();//14 - это 2 * near
         parallaxCameraPosition.y = 14.0f * FaceTrack.yNorm.get();
+        parallaxCameraPosition.z = FaceTrack.square.get();
        // System.out.println(camera.getPosition().x +" "+ (-10f * FaceTrack.xNorm.get()) + " "+ (camera.getPosition().x - (-10f * FaceTrack.xNorm.get())));
        // System.out.println(camera.getPosition().z + " " + ( FaceTrack.square.get()) + " " + (camera.getPosition().z - ( FaceTrack.square.get())));
           //  if(camera.getPosition().x - (5.0f * FaceTrack.xNorm.get())>0) {
         camera.moveLeft((camera.getPosition().x + (14f * FaceTrack.xNorm.get()))/10);//10 - это п регулятор
         camera.moveDown((camera.getPosition().y + (14f * FaceTrack.yNorm.get()))/10);
-       // camera.moveForward((camera.getPosition().z - ( FaceTrack.square.get()))/10);
+        //camera.moveForward((camera.getPosition().z + (14f * FaceTrack.square.get()))/10);
        // near = 8f + 10 * (float)Math.sqrt(FaceTrack.square.get());
 
 
@@ -383,8 +387,14 @@ public class Main implements IAppLogic {
         //System.out.println( parallaxCameraPosition.x +" / "+  parallaxCameraPosition.y);
 
 // Обновите матрицу проекции в зависимости от изменения положения камеры взгляда
-        scene.getProjection().getProjMatrix().setFrustum(left, right, bottom, top, near, far);
+         scene.getProjection().getProjMatrix().setFrustum(left, right, bottom, top, near, far);
+// Пересчитайте матрицу проекции с учетом изменений в угле обзора
+        //float aspectRatio = (right - left) / (top - bottom);
 
+       // float updatedFov = 60f / (7.0f + parallaxCameraPosition.z); // Изменение угла обзора
+        //scene.getProjection().getProjMatrix().setPerspective(-updatedFov, -aspectRatio, near, far);
+
+       // System.out.println(aspectRatio +" "+ updatedFov +" ");
 
     }
 }

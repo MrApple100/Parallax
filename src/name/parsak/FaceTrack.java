@@ -129,9 +129,9 @@ public class FaceTrack {
 							for (Rect rect : faceDetections.toArray()) {
 								DrawRectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),colorGreen);
 								//System.out.println(rect.x/frame.size().width +" "+ rect.y/frame.size().height);
-								xNorm.updateAndGet(n -> (float) ((rect.x+rect.width/2)/frame.size().width)-0.5f);
-								yNorm.updateAndGet(n -> (float) ((rect.y+rect.height/3)/frame.size().height)-0.5f);
-								square.updateAndGet(n -> (float) (rect.height)/(frame.height()));
+								xNorm.updateAndGet(n -> (float) ((rect.x+rect.width/2)/(float)frame.size().width)-0.5f);
+								yNorm.updateAndGet(n -> (float) ((rect.y+rect.height/3)/(float)frame.size().height)-0.5f);
+								square.updateAndGet(n -> (float) ((rect.height)/((float)frame.height())-0.5f)/2+0.75f);//2 - это насколько глубоко можно заглянуть, чем ниже тем глубже, 0.75 - это изначальная позиция
 
 
 							}
