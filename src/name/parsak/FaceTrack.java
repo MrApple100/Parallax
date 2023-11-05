@@ -33,6 +33,9 @@ public class FaceTrack {
 	public static AtomicReference<Float> xNorm = new AtomicReference<>(0.0f);
 	public static AtomicReference<Float> yNorm = new AtomicReference<>(0.0f);
 
+	public static AtomicReference<Float> square = new AtomicReference<>(0.0f);
+
+
 
 	//private static Scalar colorRed = new Scalar(255,0,0);
 	private static Scalar colorGreen = new Scalar(0,255,0);
@@ -128,6 +131,8 @@ public class FaceTrack {
 								//System.out.println(rect.x/frame.size().width +" "+ rect.y/frame.size().height);
 								xNorm.updateAndGet(n -> (float) ((rect.x+rect.width/2)/frame.size().width)-0.5f);
 								yNorm.updateAndGet(n -> (float) ((rect.y+rect.height/3)/frame.size().height)-0.5f);
+								square.updateAndGet(n -> (float) (rect.height)/(frame.height()));
+
 
 							}
 						}

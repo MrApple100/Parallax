@@ -54,7 +54,7 @@ public class Main implements IAppLogic {
 
     // Камера параллакса
     Matrix4f parallaxCameraView = new Matrix4f();
-    Vector3f parallaxCameraPosition = new Vector3f(0.0f, 0.0f, 1.0f);
+    Vector3f parallaxCameraPosition = new Vector3f(0.0f, 0.0f, 5.0f);
 
 
     public static void main(String[] args) {
@@ -179,16 +179,26 @@ public class Main implements IAppLogic {
         List<Material> materialList = new ArrayList<>();
         materialList.add(material);
 
+        //wall
+        Texture texture2 = scene.getTextureCache().createTexture("resources/models/cube/cubeCell.png");
+        Material material2 = new Material();
+        material2.setTexturePath(texture2.getTexturePath());
+        List<Material> materialList2 = new ArrayList<>();
+        materialList2.add(material2);
+
         Mesh mesh = new Mesh(positions, textCoords, indices);
         material.getMeshList().add(mesh);
+        Mesh mesh2 = new Mesh(positions, textCoords, indices);
+        material2.getMeshList().add(mesh2);
         Model cubeModel = new Model("cube-model", materialList);
         scene.addModel(cubeModel);
+
 
         cubeEntity = new Entity("cube-entity", cubeModel.getId());
         cubeEntity.setPosition(0, 0, -8);
         scene.addEntity(cubeEntity);
 
-        Model wallModel = new Model("wall-model", materialList);
+        Model wallModel = new Model("wall-model", materialList2);
         scene.addModel(wallModel);
 
         wallEntity = new Entity("wall-entity", wallModel.getId());
@@ -241,11 +251,11 @@ public class Main implements IAppLogic {
     }
     boolean firstTime = true;
 
-    float left = 3.0f;
-    float right = -3.0f;
-    float bottom = -3.0f;
-    float top = 3.0f;
-    float near = 8f;
+    float left = 10.0f;
+    float right = -10.0f;
+    float bottom = -10.0f;
+    float top = 10.0f;
+    float near = 7f;
     float far = 400.0f;
     @Override
     public void input(Window window, Scene scene, long diffTimeMillis) {
@@ -253,19 +263,21 @@ public class Main implements IAppLogic {
          camera = scene.getCamera();
          if(firstTime){
              camera.eye(eyePos,targetPos,upVec);
-             camera.setPosition(eyePos.x,eyePos.y,eyePos.z);
              scene.getProjection().getProjMatrix().setFrustum(left, right, bottom, top, near, far);
              firstTime = false;
          }
 
         if (window.isKeyPressed(GLFW_KEY_W)) {
-            camera.moveUp(0.1f);
+           // camera.moveUp(0.1f);
+            parallaxCameraPosition.z -=0.1f;
           //  parallaxCameraPosition.y -=0.1f;
 
 
         } else if (window.isKeyPressed(GLFW_KEY_S)) {
-            camera.moveDown(0.1f);
+           // camera.moveDown(0.1f);
           //  parallaxCameraPosition.y +=0.1f;
+            parallaxCameraPosition.z +=0.1f;
+
 
         }
         if (window.isKeyPressed(GLFW_KEY_A)) {
@@ -342,24 +354,26 @@ public class Main implements IAppLogic {
      //   bottom = parallaxCameraPosition.y - 0.040f;
 //        near = eyePos.z;
 //        float offset = eyePos.x - left; // Расчет изменения left относительно предыдущего left
-        left = parallaxCameraPosition.x - 3.0f;
-        right = parallaxCameraPosition.x + 3.0f; //5.0f это near
-        top = parallaxCameraPosition.y + 3.0f;
-        bottom = parallaxCameraPosition.y - 3.0f; //5.0f это near
+        left = parallaxCameraPosition.x - 5.0f;
+        right = parallaxCameraPosition.x + 5.0f; //5.0f это рамки сцены которую надо видеть
+        top = parallaxCameraPosition.y + 5.0f;
+        bottom = parallaxCameraPosition.y - 5.0f; //5.0f это near
+     //   far = 400 + parallaxCameraPosition.z;
 
 
      //   System.out.println(FaceTrack.xNorm +" // "+ FaceTrack.yNorm);
 
-        parallaxCameraPosition.x = 6.0f * FaceTrack.xNorm.get();
-        parallaxCameraPosition.y = 6.0f * FaceTrack.yNorm.get();
-        System.out.println(camera.getPosition().x +" "+ (-10f * FaceTrack.xNorm.get()) + " "+ (camera.getPosition().x - (-10f * FaceTrack.xNorm.get())));
-
+        parallaxCameraPosition.x = 14.0f * FaceTrack.xNorm.get();//14 - это 2 * near
+        parallaxCameraPosition.y = 14.0f * FaceTrack.yNorm.get();
+       // System.out.println(camera.getPosition().x +" "+ (-10f * FaceTrack.xNorm.get()) + " "+ (camera.getPosition().x - (-10f * FaceTrack.xNorm.get())));
+       // System.out.println(camera.getPosition().z + " " + ( FaceTrack.square.get()) + " " + (camera.getPosition().z - ( FaceTrack.square.get())));
           //  if(camera.getPosition().x - (5.0f * FaceTrack.xNorm.get())>0) {
-        camera.moveLeft((camera.getPosition().x - (-10f * FaceTrack.xNorm.get()))/10);
-          //  }else{
-           //     camera.moveRight(-(camera.getPosition().x - (5.0f * FaceTrack.xNorm.get()))/10);
+        camera.moveLeft((camera.getPosition().x + (14f * FaceTrack.xNorm.get()))/10);//10 - это п регулятор
+        camera.moveDown((camera.getPosition().y + (14f * FaceTrack.yNorm.get()))/10);
+       // camera.moveForward((camera.getPosition().z - ( FaceTrack.square.get()))/10);
+       // near = 8f + 10 * (float)Math.sqrt(FaceTrack.square.get());
 
-          //  }
+
 
            // System.out.println( camera.getPosition().x +" / "+  camera.getPosition().y);
 
