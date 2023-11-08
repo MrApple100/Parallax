@@ -1,14 +1,11 @@
 <component name="libraryTable">
   <library name="opencv-320">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../Dekstop/libraries/opencv-320.jar!/" />
+      <root url="jar://$PROJECT_DIR$/opencv-320.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <NATIVE>
-      <root url="file://$PROJECT_DIR$/../../Dekstop/libraries/x64" />
-    </NATIVE>
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../../Dekstop/libraries/opencv-320.jar!/" />
+      <root url="jar://$PROJECT_DIR$/opencv-320.jar!/" />
     </SOURCES>
   </library>
 </component>
