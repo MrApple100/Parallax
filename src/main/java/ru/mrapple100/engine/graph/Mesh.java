@@ -23,6 +23,7 @@ public class Mesh {
 
     public Mesh(float[] positions, float[] normals, float[] textCoords, int[] indices) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
+
             numVertices = indices.length;
             vboIdList = new ArrayList<>();
 
@@ -32,12 +33,19 @@ public class Mesh {
             // Positions VBO
             int vboId = glGenBuffers();
             vboIdList.add(vboId);
+
+            System.out.println(stack.getFrameIndex()+" "+  stack.getSize()+" "+positions.length);
             FloatBuffer positionsBuffer = stack.callocFloat(positions.length);
             positionsBuffer.put(0, positions);
+
+
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, positionsBuffer, GL_STATIC_DRAW);
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+
+            //clear
+         //   positionsBuffer.put(positions).flip();
 
             // Normals VBO
             vboId = glGenBuffers();

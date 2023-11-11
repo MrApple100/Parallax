@@ -163,8 +163,8 @@ public class FaceTrack {
 
 
 								xNorm.updateAndGet(n ->((xReg.get())/(float)frame.size().width)-0.5f);
-								yNorm.updateAndGet(n -> ((yReg.get())/(float)frame.size().height)-0.5f);
-								square.getAndUpdate(n -> ((squareReg.get())/((float)frame.height())-0.5f)/2+0.75f);//2 - это насколько глубоко можно заглянуть, чем ниже тем глубже, 0.75 - это изначальная позиция
+								yNorm.updateAndGet(n -> ((yReg.get()+frame.height()/4)/(float)frame.size().height)-0.5f);
+								square.getAndUpdate(n -> ((squareReg.get())/((float)frame.height())-0.5f)/1f+1f);//2 - это насколько глубоко можно заглянуть, чем ниже тем глубже, 0.75 - это изначальная позиция
 							}
 						}
 

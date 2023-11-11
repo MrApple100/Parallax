@@ -182,16 +182,20 @@ public class Main implements IAppLogic {
         Model cubeModel = ModelLoader.loadModel("cube-model", "resources/models/cube/cube.obj",
                 scene.getTextureCache());
         scene.addModel(cubeModel);
+//
+//        Model helmetModel = ModelLoader.loadModel("helmet-model", "resources/models/cube/helmet.obj",
+//                scene.getTextureCache());
+//        scene.addModel(cubeModel);
 
         cubeEntity = new Entity("cube-entity", cubeModel.getId());
-        cubeEntity.setPosition(0, 0f, -8);
+        cubeEntity.setPosition(0, 0f, -10);
         cubeEntity.updateModelMatrix();
         scene.addEntity(cubeEntity);
 
-        cubeEntity2 = new Entity("cube-entity2", cubeModel.getId());
-        cubeEntity2.setPosition(0, 0f, -10);
-        cubeEntity2.updateModelMatrix();
-        scene.addEntity(cubeEntity2);
+//        cubeEntity2 = new Entity("helmet-entity2", cubeModel.getId());
+//        cubeEntity2.setPosition(0, 0f, -10);
+//        cubeEntity2.updateModelMatrix();
+//        scene.addEntity(cubeEntity2);
 
         SceneLights sceneLights = new SceneLights();
         sceneLights.getAmbientLight().setIntensity(0.3f);
@@ -354,9 +358,9 @@ public class Main implements IAppLogic {
         if (rotation > 360) {
             rotation = 0;
         }
-        cubeEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));
+        cubeEntity.setRotation(0, 1, 0, (float) Math.toRadians(rotation));
         cubeEntity.updateModelMatrix();
-        cubeEntity2.updateModelMatrix();
+       // cubeEntity2.updateModelMatrix();
 
 
         //wallEntity.setRotation(1, 1, 1, (float) Math.toRadians(rotation));
